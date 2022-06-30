@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+
+  install:
+    commands:
+      - "apt install unzip -y"
+      - "wget https://releases.hashicorp.com/terraform/0.13.1/terraform_0.13.1_linux_amd64.zip -O terraform_0.13.1.zip"
+      - "unzip terraform_0.13.1.zip"
+      - "mv terraform /usr/local/bin/"
+      - "terraform version"
+  pre_build:
+    commands:
+      - terraform init
+
+  build:
+    commands:
+      - ls
+      - cd terraform
+      - terraform apply -auto-approve 
+
+  post_build:
+    commands:
+      - echo terraform apply completed on `date`

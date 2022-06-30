@@ -28,9 +28,9 @@ locals {
   # > "stateReason": "Threshold Crossed: 5 out of the last 5 datapoints [0.9162957064310709 (23/06/20 12:42:00), 0.934598798751831 (23/06/20 12:37:00...
   # As you can see these datapoints are not aligned along the 5 minute display boundary (12:05, 12:10) but rather 12:37, 12:42.
 
-  kinesis_consumer_lambda_name       = "$kinesis-consumer-lambda"
-  kinesis_consumer_lambda_arn        = "arn:aws:lambda:${local.region}:${local.account_id}:function:${local.kinesis_consumer_lambda_name}"
-  kinesis_consumer_lambdas_per_shard = 5 # Note: Max is 10, you can max it out if a stream can't catch up.
+  # kinesis_consumer_lambda_name       = "$kinesis-consumer-lambda"
+  # kinesis_consumer_lambda_arn        = "arn:aws:lambda:${local.region}:${local.account_id}:function:${local.kinesis_consumer_lambda_name}"
+  # kinesis_consumer_lambdas_per_shard = 5 # Note: Max is 10, you can max it out if a stream can't catch up.
   # Remove the kinesis_consumer_lambda ignore block for reserved_concurrent_executions if you change
   # this value or it won't apply when you deploy.
 }
@@ -42,12 +42,13 @@ locals {
 ##################################
 data archive_file kinesis_scaling_function_zip {
   type        = "zip"
-  source_file = "../main"
+  source_file = "../golang/scale.go"
   output_path = "../kinesis_scaling.zip"
 }
 
 resource aws_lambda_function kinesis_scaling_function {
   filename                       = data.archive_file.kinesis_scaling_function_zip.output_path
+  # filename                       = "../kinesis_scaling.zip" 
   function_name                  = local.kinesis_scaling_function_name
   handler                        = "main"
   role                           = aws_iam_role.kinesis_scaling_lambda_role.arn
@@ -55,7 +56,7 @@ resource aws_lambda_function kinesis_scaling_function {
   source_code_hash               = data.archive_file.kinesis_scaling_function_zip.output_base64sha256
   timeout                        = 900
   memory_size                    = 512
-  reserved_concurrent_executions = 1
+  # reserved_concurrent_executions = 1
 
   environment {
     variables = {
@@ -67,8 +68,8 @@ resource aws_lambda_function kinesis_scaling_function {
       SCALE_DOWN_EVALUATION_PERIOD   = local.kinesis_scale_down_evaluation_period
       SCALE_DOWN_DATAPOINTS_REQUIRED = local.kinesis_scale_down_datapoints_required
       SCALE_DOWN_MIN_ITER_AGE_MINS   = local.kinesis_scale_down_min_iter_age_mins
-      PROCESSING_LAMBDA_ARN          = local.kinesis_consumer_lambda_arn
-      PROCESSING_LAMBDAS_PER_SHARD   = local.kinesis_consumer_lambdas_per_shard
+      # PROCESSING_LAMBDA_ARN          = local.kinesis_consumer_lambda_arn
+      # PROCESSING_LAMBDAS_PER_SHARD   = local.kinesis_consumer_lambdas_per_shard
       THROTTLE_RETRY_MIN_SLEEP       = 1
       THROTTLE_RETRY_MAX_SLEEP       = 3
       THROTTLE_RETRY_COUNT           = 30

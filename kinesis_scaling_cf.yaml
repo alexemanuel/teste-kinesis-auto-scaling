@@ -58,7 +58,7 @@ Resources:
       Runtime: go1.x
       Role: !GetAtt AutoScalingLambdaRole.Arn
       Handler: main
-      ReservedConcurrentExecutions: 1 # Dont allow multiple copies to run simultaneously
+      # ReservedConcurrentExecutions: 1 # Dont allow multiple copies to run simultaneously
       MemorySize: 512
       Timeout: 900
       Code:
@@ -155,16 +155,16 @@ Resources:
                   - 'sns:Publish'
                 Resource:
                   - !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:${AWS::StackName}-kinesis-scaling-topic'
-        - PolicyName: AllowChangeFunctionConcurrencyForLambda
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 'lambda:PutFunctionConcurrency'
-                  - 'lambda:DeleteFunctionConcurrency'
-                Resource:
-                  - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-your-kinesis-consumer-function-name-here'
+        # - PolicyName: AllowChangeFunctionConcurrencyForLambda
+        #   PolicyDocument:
+        #     Version: "2012-10-17"
+        #     Statement:
+        #       - Effect: Allow
+        #         Action:
+        #           - 'lambda:PutFunctionConcurrency'
+        #           - 'lambda:DeleteFunctionConcurrency'
+        #         Resource:
+        #           - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-your-kinesis-consumer-function-name-here'
 
 
 ###############################################################################
