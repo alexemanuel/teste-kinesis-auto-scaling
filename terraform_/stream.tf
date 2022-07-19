@@ -110,13 +110,13 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_up {
     ]
   }
 
-#   depends_on = [
-#     aws_lambda_function.kinesis_scaling_function # The lambda function needs to be updated before the alarms. A scenario where
-#                                                  # this matters is changing the scaling thresholds which are baked into the scaling
-#                                                  # lambda environment variables. If the alarms are updated first it could trigger
-#                                                  # the scaling lambda before terraform gives the lambda the new thresholds, resulting
-#                                                  # in these scaling alarms being rebuilt by the alarm using the old thresholds.
-#   ]
+  depends_on = [
+    aws_lambda_function.kinesis_scaling_function # The lambda function needs to be updated before the alarms. A scenario where
+                                                 # this matters is changing the scaling thresholds which are baked into the scaling
+                                                 # lambda environment variables. If the alarms are updated first it could trigger
+                                                 # the scaling lambda before terraform gives the lambda the new thresholds, resulting
+                                                 # in these scaling alarms being rebuilt by the alarm using the old thresholds.
+  ]
 }
 
 resource aws_cloudwatch_metric_alarm kinesis_scale_down {
@@ -226,11 +226,11 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_down {
     ]
   }
 
-#   depends_on = [
-#     aws_lambda_function.kinesis_scaling_function # The lambda function needs to be updated before the alarms. A scenario where
-#                                                  # this matters is changing the scaling thresholds which are baked into the scaling
-#                                                  # lambda environment variables. If the alarms are updated first it could trigger
-#                                                  # the scaling lambda before terraform gives the lambda the new thresholds, resulting
-#                                                  # in these scaling alarms being rebuilt by the alarm using the old thresholds.
-#   ]
+  depends_on = [
+    aws_lambda_function.kinesis_scaling_function # The lambda function needs to be updated before the alarms. A scenario where
+                                                 # this matters is changing the scaling thresholds which are baked into the scaling
+                                                 # lambda environment variables. If the alarms are updated first it could trigger
+                                                 # the scaling lambda before terraform gives the lambda the new thresholds, resulting
+                                                 # in these scaling alarms being rebuilt by the alarm using the old thresholds.
+  ]
 }

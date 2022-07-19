@@ -84,17 +84,6 @@ data aws_iam_policy_document kinesis_scaling_lambda_policy_document {
       "sns:Publish",
     ]
   }
-
-  # statement {
-  #   sid       = "AllowChangeFunctionConcurrencyForLambda"
-  #   effect    = "Allow"
-  #   resources = ["arn:aws:lambda:${local.region}:${local.account_id}:function:*"]
-
-  #   actions = [
-  #     "lambda:PutFunctionConcurrency",
-  #     "lambda:DeleteFunctionConcurrency"
-  #   ]
-  # }
 }
 
 resource aws_iam_policy kinesis_scaling_lambda_policy {
