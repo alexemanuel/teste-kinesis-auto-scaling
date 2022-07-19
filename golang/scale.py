@@ -338,7 +338,7 @@ def update_alarm(
 	)
 
 
-def error_handler(message: str):
+def error_handler(message: str, alarm_name: str):
 	"""ErrorHandler is a generic error handler.
 	   The function logs the error and sends a message to the pagerduty sns topic (except for ResourceInUseException Kinesis API).
 	   The alarm state is set to OK for the alarm to retry the scaling attempt
@@ -397,7 +397,7 @@ def lambda_handler(event, context):
 		)
 	except botocore.exceptions.ClientError as error:
 		error_message = f"Falha durante a atualização do número de shards. Erro: {error.response}"
-		error_handler(error_message)
+		error_handler(error_message, alarm_name)
 		return
 
 	alarm_last_scaled_timestamp = datetime.now().isoformat()
