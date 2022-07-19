@@ -444,6 +444,8 @@ def lambda_handler(event, context):
 		"Valores das Métricas e Treshold atualizados"
 	)
 
+	scale_up_alarm_arn, scale_down_alarm_arn = get_alarm_arn(scale_up_alarm_name, scale_down_alarm_name)
+
 	# Tag Scale Up Alarm 
 	tag_alarm(
 		scale_up_alarm_arn, 
