@@ -85,7 +85,7 @@ func handleRequest(_ context.Context, snsEvent events.SNSEvent) {
 	var datapointsRequiredScaleUp, datapointsRequiredScaleDown int64
 	var upThreshold, downThreshold float64
 	var scaleDownMinIterAgeMins int64
-	var dryRun = true
+	var dryRun = false
 	// Note: Investigate envconfig (https://github.com/kelseyhightower/envconfig) to simplify this environment variable section to have less boilerplate.
 	periodMins, err := strconv.ParseInt(os.Getenv("SCALE_PERIOD_MINS"), 10, 64)
 	if err != nil {
@@ -207,7 +207,7 @@ func handleRequest(_ context.Context, snsEvent events.SNSEvent) {
 	var currentAlarmName = alarmInformation["AlarmName"].(string)
 	logger = logger.WithField("CurrentAlarmName", currentAlarmName)
 	response, err := svcCloudWatch.ListTagsForResource(&cloudwatch.ListTagsForResourceInput{
-		ResourceARN: aws.String(alarmInformation["AlarmArn"].(string))})
+	ResourceARN: aws.String(alarmInformation["AlarmArn"].(string))})
 	if err != nil {
 		logMessage := "Log Cloudwatch ListTagsForResource API error"
 		logger.WithError(err).Error(logMessage)
@@ -885,7 +885,7 @@ func emitScalingLambdaMetrics(metricName string) {
 
 func main() {
 	// Create session
-	var sess = session.Must(session.NewSession())
+	va sess = session.Must(session.NewSession())
 
 	// Create new Kinesis client
 	svcKinesis = kinesis.New(sess)

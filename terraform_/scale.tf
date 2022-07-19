@@ -3,14 +3,21 @@
 
 locals {
   kinesis_scaling_function_name          = "kinesis-scaling"
-  kinesis_period_mins                    = 5                               # This value is used here and in stream.tf alarms
+  # kinesis_period_mins                    = 5                               # This value is used here and in stream.tf alarms
+  kinesis_period_mins                    = 1                              # This value is used here and in stream.tf alarms
   kinesis_period_secs                    = 60 * local.kinesis_period_mins  # This value is used here and in stream.tf alarms
-  kinesis_scale_up_threshold             = 0.75                            # This value is used here and in stream.tf alarms
-  kinesis_scale_up_evaluation_period     = 25 / local.kinesis_period_mins  # This value is used here and in stream.tf alarms
-  kinesis_scale_up_datapoints_required   = 25 / local.kinesis_period_mins  # This value is used here and in stream.tf alarms
-  kinesis_scale_down_threshold           = 0.25                            # This value is used here and in stream.tf alarms
-  kinesis_scale_down_evaluation_period   = 300 / local.kinesis_period_mins # This value is used here and in stream.tf alarms
-  kinesis_scale_down_datapoints_required = 285 / local.kinesis_period_mins # This value is used here and in stream.tf alarms
+  # kinesis_scale_up_threshold             = 0.75                            # This value is used here and in stream.tf alarms
+  kinesis_scale_up_threshold             = 0.3                            # This value is used here and in stream.tf alarms
+  kinesis_scale_up_evaluation_period     = 3 # This value is used here and in stream.tf alarms
+  # kinesis_scale_up_evaluation_period     = 3 # This value is used here and in stream.tf alarms
+  kinesis_scale_up_datapoints_required   = 3  # This value is used here and in stream.tf alarms
+  # kinesis_scale_up_datapoints_required   = 25 / local.kinesis_period_mins  # This value is used here and in stream.tf alarms
+  # kinesis_scale_down_threshold           = 0.25                            # This value is used here and in stream.tf alarms
+  kinesis_scale_down_threshold           = 0.1                            # This value is used here and in stream.tf alarms
+  # kinesis_scale_down_evaluation_period   = 300 / local.kinesis_period_mins # This value is used here and in stream.tf alarms
+  kinesis_scale_down_evaluation_period   = 5 # This value is used here and in stream.tf alarms
+  # kinesis_scale_down_datapoints_required = 285 / local.kinesis_period_mins # This value is used here and in stream.tf alarms
+  kinesis_scale_down_datapoints_required = 3 # This value is used here and in stream.tf alarms
   kinesis_scale_down_min_iter_age_mins   = 30                              # This value is used here and in stream.tf alarms
   kinesis_fatal_error_metric_name        = "FATAL_ERROR_KINESIS_SCALING"   # This value is used here and in stream.tf alarms
   # Note: There must always be at least a 2 datapoint difference between the scale-up and scaled-down datapoints.

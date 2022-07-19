@@ -1,0 +1,21 @@
+[ERROR]	2022-07-15T21:01:06.310Z	60f06c63-1e86-40ee-ba43-02864fda6bd1	{
+    "Error": {
+        "Message": "Rate exceeded for stream autoscaling-kinesis-stream under account 167996500928.",
+        "Code": "LimitExceededException"
+    },
+    "ResponseMetadata": {
+        "RequestId": "d0087a2c-92d0-e8f2-8b43-adfed54c2424",
+        "HTTPStatusCode": 400,
+        "HTTPHeaders": {
+            "x-amzn-requestid": "d0087a2c-92d0-e8f2-8b43-adfed54c2424",
+            "x-amz-id-2": "anESDGeT8HDuBARhSj+XHzws4YYEszz16JANDxN8Hes3lPIHzeAREhJ0b6TN74xoRF6b595WcUKNSmuj48JUeJTxyHnOoYCXGJQePV7aIAs=",
+            "date": "Fri, 15 Jul 2022 21:01:06 GMT",
+            "content-type": "application/x-amz-json-1.1",
+            "content-length": "127",
+            "connection": "close"
+        },
+        "MaxAttemptsReached": true,
+        "RetryAttempts": 4
+    },
+    "message": "Rate exceeded for stream autoscaling-kinesis-stream under account 167996500928."
+}
