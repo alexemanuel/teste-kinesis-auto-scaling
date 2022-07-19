@@ -32,9 +32,9 @@ resource aws_kinesis_stream autoscaling_kinesis_stream {
 resource aws_cloudwatch_metric_alarm kinesis_scale_up {
   alarm_name                = "${aws_kinesis_stream.autoscaling_kinesis_stream.name}-scale-up"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = local.kinesis_scale_up_evaluation_period    # Defined in scale.tf
-  datapoints_to_alarm       = local.kinesis_scale_up_datapoints_required  # Defined in scale.tf
-  threshold                 = local.kinesis_scale_up_threshold            # Defined in scale.tf
+  evaluation_periods        = local.kinesis_scale_up_evaluation_period
+  datapoints_to_alarm       = local.kinesis_scale_up_datapoints_required
+  threshold                 = local.kinesis_scale_up_threshold
   alarm_description         = "Stream throughput has gone above the scale up threshold"
   insufficient_data_actions = []
   alarm_actions             = [aws_sns_topic.kinesis_scaling_sns_topic.arn]
