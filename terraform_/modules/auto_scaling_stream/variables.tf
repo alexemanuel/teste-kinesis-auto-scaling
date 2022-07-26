@@ -1,9 +1,16 @@
-variable "kinesis_stream" {
+variable "stream_name" {
     description = ""
-    type = object({
-        name        = string
-        shard_count = number
-    }) 
+    type = string
+}
+
+variable "stream_retention_period" {
+    description = ""
+    type = number
+}
+
+variable "stream_shard_count" {
+    description = ""
+    type = number
 }
 
 variable "scale_up_evaluation_period" {
@@ -41,7 +48,7 @@ variable "scale_down_min_iter_age_mins" {
     type        = number
 }
 
-variable "metrics_evaluation_period_secs" {
+variable "metrics_evaluation_period_mins" {
     description = ""
     type        = number
 }

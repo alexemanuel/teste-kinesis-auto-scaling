@@ -1,9 +1,25 @@
 locals {
-  kinesis_period_mins = var.metrics_evaluation_period_secs * 60
+  metrics_evaluation_period_secs = var.metrics_evaluation_period_mins * 60
+}
+
+resource aws_kinesis_stream autoscaling_kinesis_stream {
+  name             = var.stream_name
+  shard_count      = var.stream_shard_count
+  retention_period = var.stream_retention_period
+
+  shard_level_metrics = [
+    "IncomingBytes",
+  ]
+
+  lifecycle {
+    ignore_changes = [
+      shard_count, # Kinesis autoscaling will change the shard count outside of terraform
+    ]
+  }
 }
 
 resource aws_cloudwatch_metric_alarm kinesis_scale_up {
-  alarm_name                = "${var.kinesis_stream.name}-scale-up"
+  alarm_name                = "${var.stream_name}-scale-up"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = var.scale_up_evaluation_period
   datapoints_to_alarm       = var.scale_up_datapoints_required
@@ -15,7 +31,7 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_up {
   metric_query {
     id         = "s1"
     label      = "ShardCount"
-    expression = var.kinesis_stream.shard_count
+    expression = var.stream_shard_count
   }
 
   metric_query {
@@ -24,10 +40,10 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_up {
     metric {
       metric_name = "IncomingBytes"
       namespace   = "AWS/Kinesis"
-      period      = var.metrics_evaluation_period_secs
+      period      = local.metrics_evaluation_period_secs
       stat        = "Sum"
       dimensions = {
-        StreamName = var.kinesis_stream.name
+        StreamName = var.stream_name
       }
     }
   }
@@ -38,10 +54,10 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_up {
     metric {
       metric_name = "IncomingRecords"
       namespace   = "AWS/Kinesis"
-      period      = var.metrics_evaluation_period_secs
+      period      = local.metrics_evaluation_period_secs
       stat        = "Sum"
       dimensions = {
-        StreamName = var.kinesis_stream.name
+        StreamName = var.stream_name
       }
     }
   }
@@ -61,13 +77,13 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_up {
   metric_query {
     id         = "e3"
     label      = "IncomingBytesUsageFactor"
-    expression = "e1/(1024*1024*60*${local.kinesis_period_mins}*s1)"
+    expression = "e1/(1024*1024*60*${var.metrics_evaluation_period_mins}*s1)"
   }
 
   metric_query {
     id         = "e4"
     label      = "IncomingRecordsUsageFactor"
-    expression = "e2/(1000*60*${local.kinesis_period_mins}*s1)"
+    expression = "e2/(1000*60*${var.metrics_evaluation_period_mins}*s1)"
   }
 
   metric_query {
@@ -85,11 +101,11 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_up {
 }
 
 resource aws_cloudwatch_metric_alarm kinesis_scale_down {
-  alarm_name                = "${var.kinesis_stream.name}-scale-down"
+  alarm_name                = "${var.stream_name}-scale-down"
   comparison_operator       = "LessThanThreshold"
-  evaluation_periods        = var.scale_down_evaluation_period                                                                      # Defined in scale.tf
-  datapoints_to_alarm       = var.scale_down_datapoints_required                                                                    # Defined in scale.tf
-  threshold                 = var.kinesis_stream.shard_count == 1 ? -1 : var.scale_down_threshold        # Defined in scale.tf
+  evaluation_periods        = var.scale_down_evaluation_period                                   # Defined in scale.tf
+  datapoints_to_alarm       = var.scale_down_datapoints_required                                 # Defined in scale.tf
+  threshold                 = var.stream_shard_count == 1 ? -1 : var.scale_down_threshold        # Defined in scale.tf
   alarm_description         = "Stream throughput has gone below the scale down threshold"
   insufficient_data_actions = []
   alarm_actions             = var.alarm_actions
@@ -97,7 +113,7 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_down {
   metric_query {
     id         = "s1"
     label      = "ShardCount"
-    expression = var.kinesis_stream.shard_count
+    expression = var.stream_shard_count
   }
 
   metric_query {
@@ -112,10 +128,10 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_down {
     metric {
       metric_name = "IncomingBytes"
       namespace   = "AWS/Kinesis"
-      period      = var.metrics_evaluation_period_secs
+      period      = local.metrics_evaluation_period_secs
       stat        = "Sum"
       dimensions = {
-        StreamName = var.kinesis_stream.name
+        StreamName = var.stream_name
       }
     }
   }
@@ -126,10 +142,10 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_down {
     metric {
       metric_name = "IncomingRecords"
       namespace   = "AWS/Kinesis"
-      period      = var.metrics_evaluation_period_secs
+      period      = local.metrics_evaluation_period_secs
       stat        = "Sum"
       dimensions = {
-        StreamName = var.kinesis_stream.name
+        StreamName = var.stream_name
       }
     }
   }
@@ -140,10 +156,10 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_down {
     metric {
       metric_name = "GetRecords.IteratorAgeMilliseconds"
       namespace   = "AWS/Kinesis"
-      period      = var.metrics_evaluation_period_secs
+      period      = local.metrics_evaluation_period_secs
       stat        = "Maximum"
       dimensions = {
-        StreamName = var.kinesis_stream.name
+        StreamName = var.stream_name
       }
     }
   }
@@ -163,13 +179,13 @@ resource aws_cloudwatch_metric_alarm kinesis_scale_down {
   metric_query {
     id         = "e3"
     label      = "IncomingBytesUsageFactor"
-    expression = "e1/(1024*1024*60*${local.kinesis_period_mins}*s1)"
+    expression = "e1/(1024*1024*60*${var.metrics_evaluation_period_mins}*s1)"
   }
 
   metric_query {
     id         = "e4"
     label      = "IncomingRecordsUsageFactor"
-    expression = "e2/(1000*60*${local.kinesis_period_mins}*s1)"
+    expression = "e2/(1000*60*${var.metrics_evaluation_period_mins}*s1)"
   }
 
   metric_query {
